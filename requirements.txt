@@ -16,5 +16,12 @@ albumentations==2.0.8
 # Contraintes critiques pour éviter les conflits
 # albumentations veut numpy>=2 mais captum/numba/thunder exigent numpy<2
 numpy==1.26.4
+
 # albumentations tire opencv 4.13 qui exige numpy>=2 — on force la version NGC
 opencv-python-headless==4.10.0.84
+
+# Visualization
+seaborn
+plotly
+scikit-image
+accelerate>=1.1.0
