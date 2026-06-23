@@ -2,17 +2,19 @@ FROM nvcr.io/nvidia/pytorch:25.01-py3
 
 LABEL project="brain-tumor-detection"
 LABEL description="Détection de tumeurs cérébrales sur IRM - PyTorch"
+LABEL maintainer="Julien Pigeon"
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /workspace
 
-COPY requirements.txt .
+COPY pyproject.toml uv.lock LICENSE README.md /workspace/
 
-# On installe dans cet ordre précis :
-# 1. numpy épinglé EN PREMIER pour bloquer toute mise à jour
-# 2. opencv épinglé EN SECOND pour la même raison
-# 3. le reste du requirements.txt
-RUN pip install --no-cache-dir "numpy==1.26.4" "opencv-python-headless==4.10.0.84" \
-    && pip install --no-cache-dir -r requirements.txt
+
+RUN uv pip install --system --break-system-packages --no-cache-dir -e ".[all]"
+
 
 EXPOSE 8888
 
