@@ -1,48 +1,52 @@
 [project]
-name = "BrainScanAI"
-version="0.1.0"
-description="A simple study on how neural network architectures improve brain tumor detection"
-readme="README.md"
+name = "brainscanai"
+version = "0.1.0"
+description = "A simple study on how neural network architectures improve brain tumor detection"
+readme = "README.md"
 requires-python = ">=3.12"
-license = { file = "LICENSE"}
+license = { file = "LICENSE" }
 authors = [
-    {name = "Julien Pigeon"}
+    { name = "Julien Pigeon" },
 ]
-
-# Important: this project runs in NGC container: pytorch:25.01-py3 -> to know what it contains: run 
-
 
 dependencies = [
+    # --- ML / vision stack (non présent dans NGC) ---
+    "transformers>=4.40,<6",
+    "captum>=0.7,<1",
+    "evaluate>=0.4,<1",
+    "accelerate>=0.30",
+    "albumentations>=1.4,<3",
+    "open-clip-torch>=2.0",
+    "imagehash>=4.3",
 
-    # Interprétabilité des modèles (Grad-CAM, etc.)
-    captum==0.8.0
+    # --- Visualisation / utils ---
+    "seaborn>=0.13",
+    "plotly>=5.20",
+    "scikit-image>=0.22",
 
-    # NLP / Vision transformers Hugging Face
-    transformers==5.4.0
+    # --- Contraintes critiques pour compatibilité NGC ---
+    # Empêche numpy 2.x (incompatible avec une partie de l'écosystème CUDA actuel)
+    "numpy>=1.26,<2",
 
-    # Métriques (accuracy, F1, AUC...)
-    evaluate==0.4.6
+    # Empêche albumentations de tirer une version trop récente d'opencv
+    "opencv-python-headless>=4.9,<4.11",
 
-    # Augmentation de données images médicales
-    albumentations==2.0.8
-
-    # Contraintes critiques pour éviter les conflits
-    # albumentations veut numpy>=2 mais captum/numba/thunder exigent numpy<2
-    numpy==1.26.4
-
-    # albumentations tire opencv 4.13 qui exige numpy>=2 — on force la version NGC
-    opencv-python-headless==4.10.0.84
-
-    # Visualization
-    seaborn
-    plotly
-    scikit-image
-    accelerate>=1.1.0
-
-
+    # --- Déjà présents dans NGC (laisser libres) ---
+    "scikit-learn>=1.3",
+    "pandas>=2.0",
+    "matplotlib>=3.8",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.6",
+]
+
+all = ["brainscanai[dev]"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+bypass-selection = true
